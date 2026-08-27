@@ -1,0 +1,28 @@
+[
+  {
+    "AllowedHeaders": [
+      "Range",
+      "Authorization",
+      "Content-Type",
+      "Origin",
+      "Accept",
+      "X-Requested-With"
+    ],
+    "AllowedMethods": [
+      "GET",
+      "HEAD"
+    ],
+    "AllowedOrigins": [
+      "https://stream.yourdomain.com",
+      "https://*.yourdomain.com"
+    ],
+    "ExposeHeaders": [
+      "Content-Range",
+      "Accept-Ranges",
+      "Content-Length",
+      "ETag",
+      "Last-Modified"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]

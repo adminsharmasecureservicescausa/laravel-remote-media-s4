@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Plyr expansive theater sizing */
+#video-theater-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.plyr {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 0.75rem;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background-color: #000000 !important;
+}
+
+.plyr__video-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 88vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #000000 !important;
+    padding-bottom: 0 !important; /* Override Plyr aspect ratio padding */
+}
+
+.plyr video {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 88vh !important;
+    object-fit: contain !important;
+}
+
+.plyr--video {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+}
+
+.plyr__controls {
+    width: 100% !important;
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.85)) !important;
+}

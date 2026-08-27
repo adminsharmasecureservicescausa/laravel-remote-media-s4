@@ -1,0 +1,40 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyUnencryptedCommunications",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::my-private-secure-media-bucket",
+        "arn:aws:s3:::my-private-secure-media-bucket/*"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyDirectPublicAccess",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::my-private-secure-media-bucket/*",
+      "Condition": {
+        "StringNotLike": {
+          "aws:userId": [
+            "AROAEXAMPLEAPPUSER:*",
+            "AKIAIOSFODNN7EXAMPLE"
+          ]
+        },
+        "Null": {
+          "s3:authType": "true"
+        }
+      }
+    }
+  ]
+}
