@@ -1,0 +1,68 @@
+# Nginx Configuration Template with Mutual TLS (mTLS) Client Certificate Authentication
+# Save to: /etc/nginx/sites-available/REPLACE__ME_DOMAIN.conf
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name REPLACE__ME_DOMAIN.com;
+
+    # Redirect all plain HTTP traffic to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name REPLACE__ME_DOMAIN.com;
+
+    root /var/www/secure-media-stream/public;
+
+    # SSL Server Certificates (e.g. from Let's Encrypt Certbot)
+    ssl_certificate /etc/letsencrypt/live/REPLACE__ME_DOMAIN.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/REPLACE__ME_DOMAIN.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Client Certificate / mTLS Authentication Configuration
+    ssl_client_certificate /etc/nginx/client-certs/ca.crt;
+    ssl_verify_client optional;
+
+    # Security Headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    index index.php;
+    charset utf-8;
+    client_max_body_size 100M;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_hide_header X-Powered-By;
+
+        # HTTPS Forwarding Parameters
+        fastcgi_param HTTPS on;
+        fastcgi_param HTTP_X_FORWARDED_PROTO https;
+        fastcgi_param HTTP_X_FORWARDED_SSL on;
+
+        # Pass Client Certificate Details to Laravel
+        fastcgi_param SSL_CLIENT_VERIFY $ssl_client_verify;
+        fastcgi_param SSL_CLIENT_S_DN $ssl_client_s_dn;
+        fastcgi_param SSL_CLIENT_CERT $ssl_client_escaped_cert;
+        fastcgi_param SSL_CLIENT_FINGERPRINT $ssl_client_fingerprint;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
